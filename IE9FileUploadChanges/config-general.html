@@ -1,0 +1,174 @@
+<rfng-form r-form-name="generalForm" r-title="General" rfng-fluid-height="[r-content]"
+           r-content-style="{'min-height':'100px','overflow-y':'auto'}">
+    <rfng-form-section>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="column col-xs-6">
+                    <div class='form-group'>
+                        <div ng-form name="formValidationWrapper">
+                            <label class="control-label">
+                                <strong>Template Details</strong>
+                            </label>
+                            <label class="control-label">Please enter the basic information about this template.</label>
+                        </div>
+                    </div>
+                    <div class="form-group">&nbsp;</div>
+                    <div class='form-group'
+                         ng-class="{'has-error': generalForm.draftName.$invalid && generalForm.draftName.$dirty}">
+                        <label class="control-label">Name</label>
+                        <label class="control-label rdng-text-wrap"
+                               ng-hide='showingDraft && scrap'
+                               rdng-editable-element
+                               rdng-edit-options='rdngTextOptions'
+                               rdng-edit-value='templateData.name'
+                               editable='updateTemplateName(value)'
+                               rdng-disabled="!authTemplateLibrary.canAddOrEditTemplate">
+                            {{templateData.name}}
+                        </label>
+                        <input class="form-control" ng-if='showingDraft && scrap' type='textField' name="draftName"
+                               ng-model="scrap.name" ng-change="markDirty(1)" ng-trim=true required/>
+                        <label class="col-xs-9 control-label validation-help-block"
+                               ng-show="generalForm.draftName.$error.required && scrap.name.length!=0"><i
+                                class="fa fa-exclamation-triangle"></i>Name is required</label>
+                    </div>
+                    <div class="form-group">&nbsp;</div>
+                    <div class='form-group'>
+                        <div ng-class="{'has-error':((isExistingCode) && scrap.code.length!=0)  && (isNew)}">
+                            <label class="control-label">Code</label>
+                            <label class="rdng-text-overflow-hide control-label"
+                                   ng-hide='isNew'>{{templateData.code}}</label>
+                            <input class="form-control" name="input" ng-show='isNew' type='textField'
+                                   ng-model="scrap.code" ng-change="markDirty(2)" ng-trim=true/>
+                            <label class="col-xs-9 control-label validation-help-block"
+                                   ng-show="isExistingCode && scrap.code.length!=0 && isNew"> <i
+                                    class="fa fa-exclamation-triangle"></i> Code already exists</label>
+                        </div>
+                    </div>
+                    <div class="form-group">&nbsp;</div>
+                    <div class='form-group'>
+                        <div ng-form novalidate name="formValidationWrapper">
+                            <label class="control-label">Description</label>
+                            <label class="rdng-text-wrap control-label"
+                                   ng-hide='showingDraft && scrap'
+                                   rdng-editable-element
+                                   rdng-edit-options='rdngTextAreaOptions'
+                                   rdng-edit-value='templateData.description'
+                                   editable='updateTemplateDescription(value)'
+                                   rdng-disabled="!authTemplateLibrary.canAddOrEditTemplate">
+                                {{templateData.description}}
+                            </label>
+                            <textarea rows="3" ng-show='showingDraft && scrap' ng-model="scrap.description"
+                                      ng-change="markDirty(3)" class="form-control rdng-min-height-100"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="column col-xs-6">
+                    <div class='form-group'>
+                        <div ng-form name="formValidationWrapper">
+                            <label class="control-label">
+                                <strong>Template Layout File</strong>
+                            </label>
+                            <label class="control-label">New template layout files may be uploaded below.</label>
+                        </div>
+                    </div>
+                    <div class="form-group">&nbsp;</div>
+                    <div class='form-group'>
+                        <div ng-form name="formValidationWrapper">
+                          <label class="control-label">Current Layout File</label>
+                          <span ng-if="isDraftEdited">{{showingDraft ? templateUrl : ""}}</span>
+                          <a ng-if="!isNew && !(showingDraft && isDraftEdited)" href="" ng-click="downloadDraft()">{{download}}</a>
+                            <div ng-show="config.showQueue">
+                                {{templateUrl}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">&nbsp;</div>
+                    <!-- If not IE starts -->
+                    <!--[if gt IE 9 | !IE ]><!-->
+                    <div class='form-group' ng-controller="RdngFileUploadController">
+                        <div ng-form name="formValidationWrapper" ng-if="showingDraft && scrap">
+                            <label class="control-label">Drag and Drop to Upload Template</label>
+
+                            <div class="rfng-file-upload__drop-area">
+                                <div class="field-drop-box">
+                                    <div class="rfng-file-upload__help-block"
+                                         ng-file-drag-over-class="dragOverClass($event)" nv-file-drop=""
+                                         uploader="uploader" filters="customFilter">
+                                        <p class="text-center">
+                                            <br/>Drop file (.odt) here to attach
+                                            <br/>or
+                                        </p>
+
+                                        <div class="rfng-file-upload__button btn btn-default">
+                                            <span>Select file</span>
+                                            <input type="file" nv-file-select="" uploader="uploader"/>
+                                        </div>
+                                        <br/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                &nbsp;
+                                <div ng-if="hasUploadError" class="rdng-font-error">
+                                    <i class="fa fa-exclamation-triangle">
+                                        <span class="rdng-font-error">&nbsp;&nbsp;The selected file type is not supported, please select .odt template file.</span>
+                                    </i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <![endif]-->
+                     <!-- If not IE ends -->
+                    <!-- If IE 9 starts -->
+                    <!--[if IE 9]>
+                    <form name = "uploadform" id = "uploadform">
+	                    <div class='form-group'>
+	                        <div ng-if="showingDraft && scrap">
+	                            <label class="control-label">Drag and Drop to Upload Template</label>
+	                            <div class="rfng-file-upload__drop-area">
+	                                <div class="field-drop-box">
+	                                    <div class="rfng-file-upload__help-block">
+	                                        <p class="text-center">
+	                                            <br/>Drop file (.odt) here to attach
+	                                            <br/>or
+	                                        </p>
+	                                        <div class="rfng-file-upload__button btn btn-default">
+	                                            <span>Select file</span>
+	                                            <input type="file" name = "file" id = "file" onchange="angular.element(this).scope().validateFileForIE9(this)" />
+	                                        </div>
+	                                        <br/>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            <div>
+	                              &nbsp;
+	                              <div ng-if="hasUploadError" class="rdng-font-error">
+	                                <i class="fa fa-exclamation-triangle">
+	                                  <span class="rdng-font-error">&nbsp;&nbsp;The selected file type is not supported, please select .odt template file.</span>
+	                                </i>
+	                              </div>
+	                            </div>
+	                        </div>
+	                    </div>
+                    </form>
+                    <![endif]-->
+                    <!-- If IE9 ends -->
+                    <div>
+                        <span class="control-label validation-help-block rdng-font-error" ng-show="responseError">
+                            <i class="fa fa-exclamation-triangle"></i> {{responseError}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </rfng-form-section>
+    <section role="footer">
+        <rfng-button-bar r-align="right">
+            <button class="pull-right btn btn-default"
+                    ng-disabled="(!canSave || isExistingCode) || hasFileUploadError || formNameValidationWrapper.$invalid || scrap.code.length === undefined"
+                    ng-show="showingDraft && authTemplateLibrary.canAddOrEditTemplate" data-ng-click="saveDraft()">
+                SAVE DRAFT
+            </button>
+        </rfng-button-bar>
+    </section>
+</rfng-form>
